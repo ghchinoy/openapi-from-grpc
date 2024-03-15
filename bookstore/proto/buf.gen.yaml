@@ -1,0 +1,15 @@
+version: v1
+plugins:
+  - plugin: go
+    out: bookstore/pb
+    opt: paths=source_relative
+  - plugin: go-grpc
+    out: bookstore/pb
+    opt: paths=source_relative,require_unimplemented_servers=false
+  - plugin: grpc-gateway
+    out: bookstore/pb
+    opt: paths=source_relative
+  - plugin: buf.build/community/google-gnostic-openapi:latest
+    out: gen
+    opt:
+      - paths=source_relative

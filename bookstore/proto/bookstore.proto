@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package bookstore;
+option go_package = "bookstore/pb";
+import "google/api/annotations.proto";
+
+message Book {
+  string title = 1;
+  string author = 2;
+  int32 pages = 3;
+  optional string language = 4;
+}
+
+message GetBooksRequest {}
+message GetBooksResponse {
+  repeated Book books = 1;
+}
+
+service Inventory {
+  rpc GetBooks(GetBooksRequest) returns (GetBooksResponse) {}
+}
+
+message EchoMessage {
+  string value = 1;
+}
+
+service Echo {
+  rpc Echo(EchoMessage) returns (EchoMessage) {
+    option (google.api.http) = {
+      post: "/v1/echo"
+      body: "*"
+    };
+  }
+}
