@@ -38,13 +38,19 @@ protoc --proto_path=proto proto/*.proto  --go_out=. --go-grpc_out=. --openapi_ou
 
 ## Test
 
+Start the server; it'll start both a gRPC server and a gRPC Gateway server.
+
+
 ```
 go run *.go
 2024/03/14 22:16:27 gRPC server started on port 8080
 2024/03/14 22:16:27 gRPC-gateway started on port 8090
 ```
 
-Then in another terminal
+Then in another terminal, let's make some calls.
+
+Using [grpcurl](https://github.com/fullstorydev/grpcurl), make a call to the gRPC server endpoint that's only exposed via gRPC.
+
 
 ```
 $ grpcurl -plaintext localhost:8080 bookstore.Inventory.GetBooks
@@ -62,9 +68,34 @@ $ grpcurl -plaintext localhost:8080 bookstore.Inventory.GetBooks
     }
   ]
 }
+```
+
+Now, using curl, make a call to the gRPC Gateway endpoint that's exposed via REST.
+
+
+```
 $ curl localhost:8090/v1/echo -d '{"value":"hello you big boy"}'
 {"value":"hello you big boy"}
 
+```
+
+Since it's gRPC as well, you can also make a gRPC call to the gRPC Gateway endpoint.
+
+```
+grpcurl -plaintext -d '{"value": "hello there big boy"}' localhost:8080 bookstore.Echo.Echo
+{
+  "value": "hello there big boy"
+}
+```
+
+You can also do the same with [grpc_cli](https://github.com/grpc/grpc/blob/master/doc/command_line_tool.md)
+
+
+```
+grpc_cli call localhost:8080 Echo "value: 'hi there you repeat this'"
+connecting to localhost:8080
+value: "hi there you repeat this"
+Rpc succeeded with OK status
 ```
 
 
@@ -75,3 +106,4 @@ $ curl localhost:8090/v1/echo -d '{"value":"hello you big boy"}'
 * https://grpc.io/docs/languages/go/basics/
 * https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/introduction/
 * https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/adding_annotations/#using-protoc
+* https://sahansera.dev/building-grpc-server-go/
